@@ -80,7 +80,7 @@ function Accelerometer({ sensorData }) {
   // Update history with new data
   const currentTime = new Date().toLocaleTimeString();
   historyRef.current = [
-    ...historyRef.current.slice(-50), // Keep last 50 readings
+    ...historyRef.current.slice(-50),
     {
       timestamp: currentTime,
       x: sensorData.accelerometer.x,
@@ -94,19 +94,19 @@ function Accelerometer({ sensorData }) {
       <h1>Accelerometer Data</h1>
       <Row gutter={[16, 16]}>
         <Col span={12}>
-          <Card title="Current Values">
+          <Card title="Current Values" className="custom-card">
             <p>X-axis: {sensorData.accelerometer.x.toFixed(2)} m/s²</p>
             <p>Y-axis: {sensorData.accelerometer.y.toFixed(2)} m/s²</p>
             <p>Z-axis: {sensorData.accelerometer.z.toFixed(2)} m/s²</p>
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="3D Visualization" style={{ height: '400px' }}>
+          <Card title="3D Visualization" className="custom-card" style={{ height: '400px' }}>
             <AccelerometerVisualization data={sensorData.accelerometer} />
           </Card>
         </Col>
         <Col span={24}>
-          <Card title="History">
+          <Card title="History" className="custom-card">
             <AccelerometerHistory data={historyRef.current} />
           </Card>
         </Col>

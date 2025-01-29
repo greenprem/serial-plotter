@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 
 // Custom Gauge Component
-const GaugeChart = ({ value, min, max, unit, colors }) => {
+const GaugeChart = ({ value, min, max, unit, colors, theme }) => {
     const percentage = ((value - min) / (max - min)) * 100;
     const data = [
         { name: 'value', value: percentage },
@@ -41,7 +41,7 @@ const GaugeChart = ({ value, min, max, unit, colors }) => {
                     y="90%"
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    style={{ fontSize: '24px', fontWeight: 'bold' }}
+                    style={{ fontSize: '24px', fontWeight: 'bold', fill: theme.text }}
                 >
                     {value}{unit}
                 </text>
@@ -69,7 +69,7 @@ const getAQIStatus = (aqi) => {
     return 'Hazardous';
 };
 
-function Environment({ sensorData }) {
+function Environment({ sensorData, isDarkMode, theme }) {
     const historyRef = useRef([]);
     
     // Update history with new data
@@ -85,20 +85,27 @@ function Environment({ sensorData }) {
         }
     ];
 
+    const cardStyle = {
+        background: theme.componentBackground,
+        color: theme.text,
+        border: `1px solid ${theme.borderColor}`,
+    };
+
     return (
         <div style={{ padding: '20px' }}>
-            <h1 style={{ marginBottom: '24px' }}>Environmental Monitoring</h1>
+            <h1 style={{ marginBottom: '24px', color: theme.text }}>Environmental Monitoring</h1>
             
             {/* Current Readings Section */}
             <Row gutter={[16, 16]}>
                 {/* Temperature Card */}
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card style={cardStyle}>
                         <Statistic
-                            title="Temperature"
+                            title={<span style={{ color: theme.textSecondary }}>Temperature</span>}
                             value={sensorData.environment.temperature}
                             suffix="°C"
                             prefix={<AreaChartOutlined />}
+                            valueStyle={{ color: theme.text }}
                         />
                         <GaugeChart
                             value={sensorData.environment.temperature}
@@ -106,18 +113,20 @@ function Environment({ sensorData }) {
                             max={50}
                             unit="°C"
                             colors={['#87CEEB', '#FF4500']}
+                            theme={theme}
                         />
                     </Card>
                 </Col>
 
                 {/* Humidity Card */}
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card style={cardStyle}>
                         <Statistic
-                            title="Humidity"
+                            title={<span style={{ color: theme.textSecondary }}>Humidity</span>}
                             value={sensorData.environment.humidity}
                             suffix="%"
                             prefix={<CloudOutlined />}
+                            valueStyle={{ color: theme.text }}
                         />
                         <GaugeChart
                             value={sensorData.environment.humidity}
@@ -125,18 +134,20 @@ function Environment({ sensorData }) {
                             max={100}
                             unit="%"
                             colors={['#87CEEB', '#4169E1']}
+                            theme={theme}
                         />
                     </Card>
                 </Col>
 
                 {/* Pressure Card */}
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card style={cardStyle}>
                         <Statistic
-                            title="Pressure"
+                            title={<span style={{ color: theme.textSecondary }}>Pressure</span>}
                             value={sensorData.environment.pressure}
                             suffix="hPa"
                             prefix={<DashboardOutlined />}
+                            valueStyle={{ color: theme.text }}
                         />
                         <GaugeChart
                             value={sensorData.environment.pressure}
@@ -144,15 +155,16 @@ function Environment({ sensorData }) {
                             max={1100}
                             unit="hPa"
                             colors={['#90EE90', '#32CD32']}
+                            theme={theme}
                         />
                     </Card>
                 </Col>
 
                 {/* AQI Card */}
                 <Col xs={24} sm={12} lg={6}>
-                    <Card>
+                    <Card style={cardStyle}>
                         <Statistic
-                            title="Air Quality Index"
+                            title={<span style={{ color: theme.textSecondary }}>Air Quality Index</span>}
                             value={sensorData.environment.aqi}
                             prefix={<AlertOutlined />}
                             valueStyle={{ color: getAQIColor(sensorData.environment.aqi) }}
@@ -171,6 +183,7 @@ function Environment({ sensorData }) {
                             max={500}
                             unit=""
                             colors={['#00e400', '#ffff00', '#ff7e00', '#ff0000', '#99004c', '#7e0023']}
+                            theme={theme}
                         />
                     </Card>
                 </Col>
@@ -180,13 +193,16 @@ function Environment({ sensorData }) {
             <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
                 {/* Temperature & Humidity Chart */}
                 <Col xs={24} lg={12}>
-                    <Card title="Temperature & Humidity History">
+                    <Card 
+                        title={<span style={{ color: theme.text }}>Temperature & Humidity History</span>} 
+                        style={cardStyle}
+                    >
                         <ResponsiveContainer width="100%" height={300}>
                             <LineChart data={historyRef.current}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="timestamp" />
-                                <YAxis yAxisId="temp" domain={[-10, 50]} />
-                                <YAxis yAxisId="humidity" orientation="right" domain={[0, 100]} />
+                                <CartesianGrid strokeDasharray="3 3" stroke={theme.borderColor} />
+                                <XAxis dataKey="timestamp" stroke={theme.text} />
+                                <YAxis yAxisId="temp" domain={[-10, 50]} stroke={theme.text} />
+                                <YAxis yAxisId="humidity" orientation="right" domain={[0, 100]} stroke={theme.text} />
                                 <Tooltip />
                                 <Legend />
                                 <Line
@@ -210,13 +226,16 @@ function Environment({ sensorData }) {
 
                 {/* Pressure & AQI Chart */}
                 <Col xs={24} lg={12}>
-                    <Card title="Pressure & Air Quality History">
+                    <Card 
+                        title={<span style={{ color: theme.text }}>Pressure & Air Quality History</span>} 
+                        style={cardStyle}
+                    >
                         <ResponsiveContainer width="100%" height={300}>
                             <LineChart data={historyRef.current}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="timestamp" />
-                                <YAxis yAxisId="pressure" domain={[900, 1100]} />
-                                <YAxis yAxisId="aqi" orientation="right" domain={[0, 500]} />
+                                <CartesianGrid strokeDasharray="3 3" stroke={theme.borderColor} />
+                                <XAxis dataKey="timestamp" stroke={theme.text} />
+                                <YAxis yAxisId="pressure" domain={[900, 1100]} stroke={theme.text} />
+                                <YAxis yAxisId="aqi" orientation="right" domain={[0, 500]} stroke={theme.text} />
                                 <Tooltip />
                                 <Legend />
                                 <Line

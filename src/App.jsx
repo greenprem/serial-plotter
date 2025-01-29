@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Button, message } from 'antd';
+import { Layout, Menu, Button, message, Switch } from 'antd';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import GpsMap from './pages/GpsMap';
@@ -8,10 +8,32 @@ import Environment from './pages/Environment';
 
 const { Header, Sider, Content } = Layout;
 
+// Add theme constants
+const themes = {
+  dark: {
+    background: '#001529', // Bluish dark background
+    componentBackground: '#162639', // Slightly lighter bluish dark for cards
+    text: '#ffffff',
+    textSecondary: '#a6a6a6',
+    borderColor: '#303030',
+  },
+  light: {
+    background: '#ffffff',
+    componentBackground: '#ffffff',
+    text: '#000000',
+    textSecondary: '#666666',
+    borderColor: '#f0f0f0',
+  }
+};
+
 function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const [port, setPort] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [reader, setReader] = useState(null);
+
+  const currentTheme = isDarkMode ? themes.dark : themes.light;
+
   const [sensorData, setSensorData] = useState({
     gps: { latitude: 0, longitude: 0 },
     accelerometer: { x: 0, y: 0, z: 0 },
@@ -155,10 +177,20 @@ function App() {
     message.success('Disconnected');
   };
 
+  const headerStyles = {
+    padding: '0 16px',
+    background: currentTheme.componentBackground,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    color: currentTheme.text,
+    borderBottom: `1px solid ${currentTheme.borderColor}`,
+  };
+
   return (
     <Router>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Header style={{ padding: '0 16px', background: '#fff' }}>
+      <Layout style={{ minHeight: '100vh', background: currentTheme.background }}>
+        <Header style={headerStyles}>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <Button 
               type="primary"
@@ -167,13 +199,23 @@ function App() {
               {isConnected ? 'Disconnect' : 'Connect to Serial Port'}
             </Button>
           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Switch
+              checked={isDarkMode}
+              onChange={setIsDarkMode}
+              checkedChildren="🌙"
+              unCheckedChildren="☀️"
+            />
+          </div>
         </Header>
         
         <Layout>
-          <Sider width={200} style={{ background: '#fff' }}>
+          <Sider width={200} style={{ background: currentTheme.componentBackground }}>
             <Menu
               mode="inline"
               defaultSelectedKeys={['dashboard']}
+              theme={isDarkMode ? 'dark' : 'light'}
+              style={{ background: currentTheme.componentBackground }}
             >
               <Menu.Item key="dashboard">
                 <Link to="/">Dashboard</Link>
@@ -190,12 +232,17 @@ function App() {
             </Menu>
           </Sider>
           
-          <Content style={{ padding: '24px', minHeight: 280 }}>
+          <Content style={{ 
+            padding: '24px', 
+            minHeight: 280,
+            background: currentTheme.background,
+            color: currentTheme.text 
+          }}>
             <Routes>
-              <Route path="/" element={<Dashboard sensorData={sensorData} />} />
-              <Route path="/gps" element={<GpsMap sensorData={sensorData} />} />
-              <Route path="/accelerometer" element={<Accelerometer sensorData={sensorData} />} />
-              <Route path="/environment" element={<Environment sensorData={sensorData} />} />
+              <Route path="/" element={<Dashboard sensorData={sensorData} isDarkMode={isDarkMode} theme={currentTheme} />} />
+              <Route path="/gps" element={<GpsMap sensorData={sensorData} isDarkMode={isDarkMode} theme={currentTheme} />} />
+              <Route path="/accelerometer" element={<Accelerometer sensorData={sensorData} isDarkMode={isDarkMode} theme={currentTheme} />} />
+              <Route path="/environment" element={<Environment sensorData={sensorData} isDarkMode={isDarkMode} theme={currentTheme} />} />
             </Routes>
           </Content>
         </Layout>

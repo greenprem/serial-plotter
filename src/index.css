@@ -29,3 +29,32 @@ body {
   width: 100% !important;
   height: 100% !important;
 }
+.custom-card {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: var(--ant-text-color) !important;
+}
+
+.custom-card .ant-card-head {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  color: var(--ant-text-color) !important;
+}
+
+.custom-card .ant-card-head {
+  background-color: var(--ant-card-head-background) !important;
+}
+
+.custom-card .ant-statistic-title,
+.custom-card .ant-statistic-content-value,
+.custom-card .ant-statistic-content-suffix {
+  color: var(--ant-text-color) !important;
+}
+
+[data-theme='dark'] .custom-card .ant-statistic-title,
+[data-theme='dark'] .custom-card .ant-statistic-content-value,
+[data-theme='dark'] .custom-card .ant-statistic-content-suffix {
+  color: #fff !important;
+}
+[data-theme='dark'] .dashboard-statistic .ant-statistic-title,
+[data-theme='dark'] .dashboard-statistic .ant-statistic-content {
+  color: white !important;
+}
